@@ -1,10 +1,18 @@
 import time
+import os
+import json
+from datetime import datetime
+
+now = datetime.now()
+now = datetime.now()
+hour_formated = now.strftime("%H:%M")
+day_formated = now.strftime("%d/%m/%Y")
 
 operations_available = {
-    "+": lambda a,b: a + b,
-    "-": lambda a,b: a - b,
-    "*": lambda a,b: a * b,
-    "/": lambda a,b: a / b 
+    "+": lambda a,b: (f"{a} + {b} = {a+b}"),
+    "-": lambda a,b: (f"{a} - {b} = {a-b}"),
+    "*": lambda a,b: (f"{a} * {b} = {a*b}"),
+    "/": lambda a,b: (f"{a} / {b} = {a/b}") 
 }
 
 #function input --> get datas from user
@@ -17,10 +25,7 @@ def WelcomeUser():
         bdayYear = True
     name = input("What is your name? ")
     age = int(input("How old are you? "))
-    if bdayYear == True:
-        yearBorn = year - age
-    else:
-        yearBorn = (year - age) - 1
+    yearBorn = year - age - (0 if bdayYear else 1)
     user = {
         "Name": name,
         "Year Born": yearBorn,
@@ -31,7 +36,7 @@ def WelcomeUser():
 #function output
 def show_user_data(user):
     for i in user:
-        user_datas = f"{i}:{user[i]}"
+        user_datas = f"{i}:{user[i]}" #to show userdatas more friendly in print
         print(user_datas)
 #function output
 def operation(op,n1,n2):
@@ -78,11 +83,33 @@ def menufunc():
         optionmenu = input("Choose one of them options(1/2/3): ")
     return optionmenu
 
+def add_user(userdata, file="userinfos.json"):
+    array1 = []
+    with open(file, "r") as f:
+        content = f.read().strip()
+    if content:
+        content_decoded = json.loads(content) #json  str format into python object
+        for i in content_decoded:
+            array1.append(i)
+        array1.append(userdata)
+        json_data = json.dumps(array1, indent=4)
+        with open("userinfos.json", "w") as f:
+            f.write(json_data)
 
 def main():
     user = WelcomeUser()
+    user_datas_tuple = {} #stophere
+
+
+
     print(f"Welcome, Mr {user['Name']}, born in {user['Year Born']}, you receive an access to the JVBCalculator")
-    
+    """
+    jsonusers = json.dumps(user)
+    with open("userinfos.json", "a") as userinfojson:
+        if userinfojson.tell() > 0:
+            userinfojson.write(f"")
+        userinfojson.write(f"\n{jsonusers}")
+    """
     while True:
         optionmenu = menufunc()
         if optionmenu == "1":
