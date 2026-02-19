@@ -83,7 +83,7 @@ def menufunc():
         optionmenu = input("Choose one of them options(1/2/3): ")
     return optionmenu
 
-def add_user(userdata, file="userinfos.json"):
+def AddToJson(data, file):
     array1 = []
     with open(file, "r") as f:
         content = f.read().strip()
@@ -91,47 +91,51 @@ def add_user(userdata, file="userinfos.json"):
         content_decoded = json.loads(content) #json  str format into python object
         for i in content_decoded:
             array1.append(i)
-        array1.append(userdata)
+        array1.append(data)
         json_data = json.dumps(array1, indent=4)
-        with open("userinfos.json", "w") as f:
+        with open(file, "w") as f:
             f.write(json_data)
-
+    else:
+        array1.append(data)
+        json_data = json.dumps(array1, indent=4)
+        with open(file, "w") as f:
+            f.write(json_data)
 def main():
     user = WelcomeUser()
-    user_datas_dict = user.copy()
+    user_datas_dict = user.copy() #copy user variable to add two new columns
     user_datas_dict.update({
         "Hours": hour_formated,
         "Day": day_formated
     })
-    add_user(user_datas_dict)
-
-
+    AddToJson(user_datas_dict, "./json/userinfos.json")
 
     print(f"Welcome, Mr {user['Name']}, born in {user['Year Born']}, you receive an access to the JVBCalculator")
     
-    """
-    jsonusers = json.dumps(user)
-    with open("userinfos.json", "a") as userinfojson:
-        if userinfojson.tell() > 0:
-            userinfojson.write(f"")
-        userinfojson.write(f"\n{jsonusers}")
-    """
+
     while True:
         optionmenu = menufunc()
-        if optionmenu == "1":
-            try:
-                calctype = get_operation()
-                operation = get_valid_operation(calctype)
-                num1, num2 = get_numbers()
-                result = menu[optionmenu](operation,num1,num2)
-                print(f"Result {result}")
-            except ZeroDivisionError:
-                print("Division by zero is not allowed")
-        elif optionmenu == "2":
-            result = menu[optionmenu](user)
-        elif optionmenu == "3":
-            print("Goodbye! See you later!")
-            break
+        match optionmenu: #to avoid use if/elif/elif
+            case  "1":
+                try:
+                    calctype = get_operation()
+                    operation = get_valid_operation(calctype)
+                    num1, num2 = get_numbers()
+                    result = menu[optionmenu](operation,num1,num2)
+                    calcDict = {
+                        "Calc Type": calctype,
+                        "Operation": result,
+                        "Hours": hour_formated,
+                        "Day": day_formated
+                        }
+                    AddToJson(calcDict, "./json/calcinfos.json")
+                    print(f"Result: {result}")
+                except ZeroDivisionError:
+                    print("Division by zero is not allowed")
+            case "2":
+                result = menu[optionmenu](user)
+            case "3":
+                print("Goodbye! See you later!")
+                break
         time.sleep(1)
 
 main()

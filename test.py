@@ -1,6 +1,6 @@
 import json
 
-def add_user(userdata, file="userinfos.json"):
+def add_user(userdata, file="./json/test.json"):
     array1 = []
     with open(file, "r") as f:
         content = f.read().strip()
@@ -16,7 +16,7 @@ def add_user(userdata, file="userinfos.json"):
         json_data = json.dumps(array1, indent=4)
         print(type(json_data))
         print(json_data)
-        with open("userinfos.json", "w") as f:
+        with open(file, "w") as f:
             f.write(json_data)
         
             
