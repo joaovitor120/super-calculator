@@ -17,7 +17,7 @@ def convertion_coin(rate, quantity): #to convert how many R$ you need to buy one
     moneyToBuy = quantity * rate
     return moneyToBuy
 
-def proccess_main():
+def proccess_main(): 
     coin_code, coin_quantity = get_input_coin()
     codein = "BRL"
     url = "https://economia.awesomeapi.com.br/last/USD-BRL,EUR-BRL,BTC-BRL"

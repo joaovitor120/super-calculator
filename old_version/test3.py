@@ -1,4 +1,4 @@
-def WelcomeUser():
+"""def WelcomeUser():
     bdayYear = False
     year = int(input("Which year we are? "))
     bday = input("Do you already make birthiday this year?(Y/N)").upper()
@@ -19,4 +19,8 @@ var1 = WelcomeUser()
 var2 = dict(var1)
 print(type(var2))
 print(type(var1))
+print(var2)"""
+
+var = ["a","b","c"]
+var2 = (", ".join(letter for letter in var))
 print(var2)
