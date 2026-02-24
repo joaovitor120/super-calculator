@@ -6,8 +6,9 @@ import menuFunctions
 from json_files import json_insert_data
 import math
 import sqlite3
+import uuid
 
-now = datetime.now()
+user_id = uuid.uuid4().bytes
 now = datetime.now()
 hour_formated = now.strftime("%H:%M") #get hour data
 day_formated = now.strftime("%d/%m/%Y") #get day data
@@ -25,7 +26,7 @@ calcinfos_path = "./json_files/calcinfos.json"
 connection = sqlite3.connect("./database/database.db")
 cursor = connection.cursor()
 columns_user = ["Name", "Year_born", "Age", "Hours", "Day"]
-columns_calc = ["CalcType", "Operation", "Hours", "Day"]
+columns_calc = ["CalcType", "Operation", "Hours", "Day", "User"]
 tables_formatted = (", ".join(i for i in columns_user))
 tables_formatted_calc = (", ".join(i for i in columns_calc))
 
@@ -47,7 +48,8 @@ cursor.execute("""
         CalcType TEXT NOT NULL,
         Operation TEXT NOT NULL,
         Hours TEXT NOT NULL,
-        Day TEXT NOT NULL
+        Day TEXT NOT NULL,
+        User TEXT NOT NULL
         )
 """)
 
@@ -60,24 +62,25 @@ def main():
     })
     json_insert_data.AddToJson(user_datas_dict, "./json_files/userinfos.json")
 
-    print(f"Welcome, Mr {user['Name']}, born in {user['Year Born']}, you receive an access to the JVBCalculator")
-    cursor.execute(f"""
-    INSERT INTO User
-    ({tables_formatted}) VALUES
-    ('{user['Name']}', {user['Year Born']}, {user['Age']}, '{hour_formated}', '{day_formated}')""")
+    print(f"Welcome,{user['Name']}, born in {user['Year Born']}, you receive an access to the JVBCalculator")
+    if user['New'] == True:
+        cursor.execute(f"""
+        INSERT INTO User
+        ({tables_formatted}) VALUES
+        ('{user['Name']}', {user['Year Born']}, {user['Age']}, '{hour_formated}', '{day_formated}')""")
 
 
     while True:
         optionmenu = menuFunctions.menufunc()
         match optionmenu: #to avoid use if/elif/elif
-            case  "1":
+            case  "1": #calculator
                 try:
-                    calctype = calculate_file.get_operation()
-                    operation = calculate_file.get_valid_operation(calctype)
+                    calctype_to_verified = calculate_file.get_operation() #not verified yet
+                    operation = calculate_file.get_valid_operation(calctype_to_verified)
                     num1, num2 = calculate_file.get_numbers()
                     result = menuFunctions.menu[optionmenu](operation,num1,num2)
                     calcDict = {
-                        "Calc Type": calctype,
+                        "Calc Type": operation,
                         "Operation": result,
                         "Hours": hour_formated,
                         "Day": day_formated
@@ -87,22 +90,26 @@ def main():
                     cursor.execute(f"""
                     INSERT INTO CalcInfos
                     ({tables_formatted_calc}) VALUES
-                    ('{calcDict["Calc Type"]}', '{calcDict["Operation"]}', '{hour_formated}', '{day_formated}')""")
+                    ('{calcDict["Calc Type"]}', '{calcDict["Operation"]}', '{hour_formated}', '{day_formated}', '{user['Name']}')""")
                     connection.commit()
                 except ZeroDivisionError:
                     print("Division by zero is not allowed")
-            case "2":
+            case "2": #my informations
                 result = menuFunctions.menu[optionmenu](user)
-            case "3":
-                result = menuFunctions.menu[optionmenu](calcinfos_path)
+            case "3": #calculator history
+                """result = menuFunctions.menu[optionmenu](calcinfos_path)
                 for i in result:
-                    print(i)
-            case "4":
+                    print(i)"""
+                cursor.execute(f"SELECT Operation FROM CalcInfos WHERE User = '{user['Name']}'")
+                result = cursor.fetchall() #[('10 ** 2 = 100',), ('20 / 2 = 10.0',)]
+                for i in result:
+                    print(str(i)[2:-3]) #to print the result withou the 2 first characters and without the last 3
+            case "4": #current converter
                 result = menuFunctions.menu[optionmenu]()
-            case "5":
+            case "5": #exit
                 print("Goodbye! See you later!")
                 break
         time.sleep(1)
-
+connection.commit()
 main()
 

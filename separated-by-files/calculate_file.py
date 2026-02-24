@@ -21,7 +21,7 @@ def validate_number(msg): #number validate, to see if the number is an integer
 def get_valid_operation(operation): #operation verification, i only want operations inputs availables
         while operation not in operations_available: #if the operations type not is includede in operations available dict
             print(f"Invalid operation, select only one of them:{operations}")
-            operation = input(f"Which operation do you wanna make{operations}? ").strip() #strip to remove blank spaces
+            operation = input(f"Which operation do you wanna make ({operations})? ").strip() #strip to remove blank spaces
         return operation # when it get out loop
             
             

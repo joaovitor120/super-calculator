@@ -8,11 +8,21 @@ with open("./json_files/calcinfos.json", "r") as f:
         operationsHistory.append(i['Operation'])
     print(operationsHistory)"""
 
-a = lambda a,b: (f"{a} ** {b} = {a ** b}")
+"""a = lambda a,b: (f"{a} ** {b} = {a ** b}")
 dict = {
     "+": "plus",
     "-": "subtraction"
 }
 operations = (" ".join([str(f',{i}') for i in dict]))
 print(operations)
-print(f"operation available is: {operations}")
+print(f"operation available is: {operations}")"""
+
+from datetime import datetime
+
+now = datetime.now()
+year = now.strftime("%Y")
+print(int(year))
+list = ["a", "b"]
+a,b = list
+print(a)
+print(b)

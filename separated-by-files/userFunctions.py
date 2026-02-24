@@ -1,19 +1,59 @@
-#function input --> get datas from user
+from datetime import datetime
+import sqlite3
+
+connection = sqlite3.connect("./database/database.db")
+cursor = connection.cursor()
+
+cursor.execute("""
+SELECT Name FROM User 
+""")
+Names = cursor.fetchall()
+NamesList = []
+for i in Names:
+    NamesList.append(str(i)[2:-3])
+now = datetime.now()
+#function input --> get datas from user and verified if username is available
 def WelcomeUser():
     bdayYear = False
-    year = int(input("Which year we are? "))
-    bday = input("Do you already make birthiday this year?(Y/N)").upper()
+    repeated_user = input("Do you already use JVBCalculator(Y/N)? ").strip().upper()
+    while repeated_user != 'Y' and repeated_user != "N":
+        print("Please, type only Y or N")
+        repeated_user = input("Do you already use JVBCalculator(Y/N)? ").strip().upper()
+    name = input("Which username do you wanna be called? ")
+    if repeated_user == "N":
+        while name in NamesList:
+            name = input("This username is not available, please select another username: ")
+        age = int(input("How old are you? "))
+        year = int(now.strftime("%Y"))
+        bday = input("Do you already make birthiday this year?(Y/N)").upper()
 
-    if bday == "Y":
-        bdayYear = True
-    name = input("What is your name? ")
-    age = int(input("How old are you? "))
-    yearBorn = year - age - (0 if bdayYear else 1) #remove 1 year from year born if already make birthday or 0 if not
-    user = {
+        if bday == "Y":
+            bdayYear = True
+        yearBorn = year - age - (0 if bdayYear else 1) #remove 1 year from year born if already make birthday or 0 if not
+        user = {
+            "Name": name,
+            "Year Born": yearBorn,
+            "Age": age,
+            "New": True
+        }
+    elif repeated_user == "Y":
+        while name not in NamesList:
+            name = input("I could not find you username at my database, please type your username again: ")
+        cursor.execute(f"""
+        SELECT Year_born, Age FROM User WHERE Name = '{name}'
+        """)
+        dataset_user_data = cursor.fetchall()
+        dataset_data = []
+        for i in dataset_user_data[0]:
+            dataset_data.append(i)
+
+        yearBorn, age = dataset_data
+        user = {
         "Name": name,
         "Year Born": yearBorn,
-        "Age": age
-    }
+        "Age": age,
+        "New": False
+        }
     return user #return a dict with all user info
 
 #function output

@@ -21,6 +21,16 @@ print(type(var2))
 print(type(var1))
 print(var2)"""
 
-var = ["a","b","c"]
+"""var = ["a","b","c"]
 var2 = (", ".join(letter for letter in var))
-print(var2)
+print(var2)"""
+import sqlite3
+connect = sqlite3.connect("../separated-by-files/database/database.db")
+cursor = connect.cursor()
+cursor.execute("SELECT Operation FROM CalcInfos")
+result = cursor.fetchall()
+print(result)
+print(type(result))
+for i in result:
+    i_str = str(i)
+    print(i_str[2:-3])

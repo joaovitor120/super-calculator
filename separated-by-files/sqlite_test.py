@@ -1,11 +1,11 @@
 import sqlite3
 
-name = "joao"
+name = "wagner"
 yb = 2008
 age = 10
 hours = "12"
 day = "1"
-db = ""
+db = "./database/testDatabase.db"
 connection = sqlite3.connect(db)
 cursor = connection.cursor()
 columns = ["Name", "Year_born", "Age", "Hours", "Day"]
@@ -21,9 +21,45 @@ cursor.execute("""
         Day TEXT NOT NULL
         )
 """)
+cursor.execute("""
+    SELECT Name FROM User
+""")
+Names = cursor.fetchall()
+print(Names)
+seen = []
+duplicates = []
+for i in Names:
+    if i in seen:
+        duplicates.append(i)
+    else:
+        seen.append(i)
+print(duplicates)
 
-cursor.execute(f"""
-    INSERT INTO User
-    ({tables_formatted}) VALUES
-    ('{name}', {yb}, {age}, '{hours}', '{day}')""")
-connection.commit()
+for i in duplicates:
+    print(str(i)[2:-3])
+
+
+names_list = []
+#for i in Names:
+#    print(i)
+#    names_list.append(str(i)[2:-3])
+#    cursor.execute(f"""
+#DELETE FROM User WHERE Name = '{str(i)[2:-3]}';
+#""")
+name_input = input("Type your name: ")
+if name_input == name:
+    cursor.execute(f"""
+SELECT * FROM User WHERE Name = '{name_input}'
+""")
+user_data = cursor.fetchall()
+
+if name not in names_list:
+    cursor.execute(f"""
+        INSERT INTO User
+        ({tables_formatted}) VALUES
+        ('{name}', {yb}, {age}, '{hours}', '{day}')""")
+else:
+    print("Ja ta")
+
+connection.commit() #used everytime when i modify datas and need to permanentely save datas, like when i'm using INSERT, UPDATE OR DELETE
+#connection.fetchall() --> used when i need to get datas from the dataset
