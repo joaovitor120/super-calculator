@@ -103,10 +103,42 @@ def main():
                 cursor.execute(f"SELECT Operation FROM CalcInfos WHERE User = '{user['Name']}'")
                 result = cursor.fetchall() #[('10 ** 2 = 100',), ('20 / 2 = 10.0',)]
                 for i in result:
-                    print(str(i)[2:-3]) #to print the result withou the 2 first characters and without the last 3
+                    print(str(i)[2:-3]) #to print the result without the 2 first characters and without the last 3
             case "4": #current converter
                 result = menuFunctions.menu[optionmenu]()
-            case "5": #exit
+            case "5": #export data
+                print("""1 - Export only my user datas
+2 - Export only my operations data
+3 - Export both
+                      """)
+                select_option = input("Please, type 1, 2 or 3 to choose one export option: ")
+                def user_to_csv():
+                    user_datas_to_csv = {}
+                    for i in user_datas_dict:
+                        user_datas_to_csv[i] = [f'{user_datas_dict[i]}']
+                        
+                        return user_datas_to_csv
+                def calc_to_csv():
+                    cursor.execute(f"SELECT CalcType, Operation FROM CalcInfos WHERE User = '{user['Name']}'")
+                    calc_history = cursor.fetchall()
+                    calc_history_to_csv = {"CalcType": [],
+                "Operation": []}
+                    for i in calc_history:
+                        calc_history_to_csv["CalcType"].append(i[0])
+                        calc_history_to_csv["Operation"].append(i[1][2:-3]) 
+                    return calc_history_to_csv
+                match select_option:
+                    case "1":
+                        user_datas_to_csv = user_to_csv()
+                        menuFunctions.menu[optionmenu](user_datas_to_csv, None)
+                    case "2": 
+                        calc_history_to_csv = calc_to_csv() 
+                        menuFunctions.menu[optionmenu](None, calc_history_to_csv)
+                    case "3":
+                        user_datas_to_csv = user_to_csv()
+                        calc_history_to_csv = calc_to_csv() 
+                        menuFunctions.menu[optionmenu](user_datas_to_csv, calc_history_to_csv)
+            case "6": #exit
                 print("Goodbye! See you later!")
                 break
         time.sleep(1)
