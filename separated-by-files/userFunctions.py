@@ -19,8 +19,9 @@ def WelcomeUser():
     while repeated_user != 'Y' and repeated_user != "N":
         print("Please, type only Y or N")
         repeated_user = input("Do you already use JVBCalculator(Y/N)? ").strip().upper()
-    name = input("Which username do you wanna be called? ")
+    
     if repeated_user == "N":
+        name = input("Which username do you wanna be called? ")
         while name in NamesList:
             name = input("This username is not available, please select another username: ")
         age = int(input("How old are you? "))
@@ -37,6 +38,7 @@ def WelcomeUser():
             "New": True
         }
     elif repeated_user == "Y":
+        name = input("Type your username: ")
         while name not in NamesList:
             name = input("I could not find you username at my database, please type your username again: ")
         cursor.execute(f"""

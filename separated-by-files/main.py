@@ -106,7 +106,9 @@ def main():
                     print(str(i)[2:-3]) #to print the result without the 2 first characters and without the last 3
             case "4": #current converter
                 result = menuFunctions.menu[optionmenu]()
-            case "5": #export data
+            case "5":
+                result = menuFunctions.menu[optionmenu]()
+            case "6": #export data
                 print("""1 - Export only my user datas
 2 - Export only my operations data
 3 - Export both
@@ -138,7 +140,7 @@ def main():
                         user_datas_to_csv = user_to_csv()
                         calc_history_to_csv = calc_to_csv() 
                         menuFunctions.menu[optionmenu](user_datas_to_csv, calc_history_to_csv)
-            case "6": #exit
+            case "7": #exit
                 print("Goodbye! See you later!")
                 break
         time.sleep(1)
