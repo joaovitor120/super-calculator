@@ -6,11 +6,14 @@ operations_available = {
     "**": lambda a,b: (f"{a} ** {b} = {a**b}")
 } #lambda for each operation type
 
+
 operations = (" ".join([str(f'{i}') for i in operations_available]))
 
-#function output
-def operation(op,n1,n2):
-    return operations_available[op](n1,n2) #use the dict with lambdas to execute each operations
+
+#function output to calculate each operation
+def calculate(op,n1,n2):
+    result = operations_available[op](n1,n2) #use the dict with lambdas to execute each operations
+    return result
 
 def validate_number(msg): #number validate, to see if the number is an integer
     while True: 
@@ -32,6 +35,3 @@ def get_numbers(): #input function
     num1 = validate_number(("Type the first number: "))
     num2 = validate_number(("Type the second number: "))
     return num1, num2
-def calculate(op,n1,n2):#executable function
-    result = operation(op, n1, n2)
-    return result

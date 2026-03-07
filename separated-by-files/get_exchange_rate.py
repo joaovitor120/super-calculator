@@ -28,5 +28,4 @@ def proccess_main():
     moneyToBuy = round((convertion_coin(exchange_rate_float, coin_quantity)),2)
     print(f'You will need R${moneyToBuy:,.2f} to buy {int(coin_quantity)} {coin_code}')
 
-
 #200 OK

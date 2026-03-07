@@ -106,7 +106,7 @@ def main():
                     print(str(i)[2:-3]) #to print the result without the 2 first characters and without the last 3
             case "4": #current converter
                 result = menuFunctions.menu[optionmenu]()
-            case "5":
+            case "5": #math challenges
                 result = menuFunctions.menu[optionmenu]()
             case "6": #export data
                 print("""1 - Export only my user datas
@@ -144,6 +144,6 @@ def main():
                 print("Goodbye! See you later!")
                 break
         time.sleep(1)
-connection.commit()
+connection.commit() #to save db changes on db
 main()
 

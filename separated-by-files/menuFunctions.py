@@ -5,7 +5,7 @@ import userFunctions
 import json
 import get_exchange_rate
 import export_data
-import math_challenge
+from math_challenge import math_challenges
 
 def exit_program(user,op,n1,n2): #this function was created to set a flag when the users want to get out
     return "EXIT"
@@ -26,7 +26,7 @@ menu = { #dict with functions inserted
     "2": userFunctions.show_user_data,
     "3": calcinfo,
     "4": get_exchange_rate.proccess_main,
-    "5": math_challenge.math_challenges,
+    "5": math_challenges,
     "6": export_data.to_csv,
     "7": exit_program
 }
