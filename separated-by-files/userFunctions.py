@@ -21,7 +21,7 @@ def WelcomeUser():
         repeated_user = input("Do you already use JVBCalculator(Y/N)? ").strip().upper()
     
     if repeated_user == "N":
-        name = input("Which username do you wanna be called? ")
+        name = input("Which username do you wanna be called? ").capitalize()
         while name in NamesList:
             name = input("This username is not available, please select another username: ")
         age = int(input("How old are you? "))

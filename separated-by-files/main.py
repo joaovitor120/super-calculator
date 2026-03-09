@@ -112,7 +112,7 @@ def main():
 2 - Export only my operations data
 3 - Export both
                       """)
-                select_option = input("Please, type 1, 2 or 3 to choose one export option: ")
+                select_option = input("Please, type 1, 2 or 3 to choose one export option: ").split()
                 def user_to_csv():
                     user_datas_to_csv = {}
                     for i in user_datas_dict:
