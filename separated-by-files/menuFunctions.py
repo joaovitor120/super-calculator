@@ -5,7 +5,7 @@ import userFunctions
 import json
 import get_exchange_rate
 import export_data
-from math_challenge import math_challenges
+from math_challenge_update import math_challenges
 
 def exit_program(user,op,n1,n2): #this function was created to set a flag when the users want to get out
     return "EXIT"

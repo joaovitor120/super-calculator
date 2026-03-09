@@ -1,17 +1,17 @@
 import random
-import operator 
 from sympy import isprime
 import time
  
 levels = [1,2,3,4]
 calc_types = [1,2]
 operations_type = {
-    "+": operator.add,
-    "-": operator.sub,
-    "*": operator.mul,
-    "/": operator.truediv,
-    "**": operator.pow
+    "+": lambda a,b: a + b,
+    "-": lambda a,b: a - b,
+    "*": lambda a,b: a * b,
+    "/": lambda a,b: a / b,
+    "**": lambda a,b: a ** b
 }
+
 length_op_list = len(list(operations_type.keys()))
 
 class DifficultyRange:
@@ -102,13 +102,13 @@ def answer_check_loop(num1,num2, op_symbol,result_calc, result, multiple_operati
             result_calc = int(input(multiple_operations))
         else:
             result_calc = int(input(f"{num1} {op_symbol} {num2} = "))
-
-def challenge_simple(difficulty, op_min, op_max,onlyReturn=False):
+def generate_challenge(difficulty, op_min, op_max):
     num1, num2, op_symbol = get_calculator_datas(ranges.get_min(difficulty), ranges.get_med(difficulty), ranges.get_max(difficulty),op_min,op_max)
     result = operations_type[op_symbol](num1, num2)
     num1, num2, op_symbol, result = verify_numbers(result,num1,num2,op_symbol,ranges.get_min(difficulty), ranges.get_med(difficulty), ranges.get_max(difficulty),op_min,op_max)
-    if onlyReturn:
-        return num1,num2,op_symbol,result
+    return num1, num2, op_symbol, result
+def challenge_simple(difficulty, op_min, op_max):
+    num1, num2, op_symbol, result = generate_challenge(difficulty, op_min, op_max)
     start_time = time.perf_counter()  
     result_calc = int(input(f"{num1} {op_symbol} {num2} = "))
     if result_calc != result:
@@ -118,9 +118,9 @@ def challenge_simple(difficulty, op_min, op_max,onlyReturn=False):
     print(f"Perfect, your answer the correct answer in {int(execution_time)} seconds, congratulations!")
     
 def challenge_complex(difficulty, op_min, op_max):
-    num1, num2, op_symbol, result = challenge_simple(difficulty, op_min, op_max, True)
+    num1, num2, op_symbol, result = generate_challenge(difficulty, op_min, op_max)
                     
-    num3, num4, op_symbol_1, result_1 = challenge_simple(difficulty, op_min, op_max, True)
+    num3, num4, op_symbol_1, result_1 = generate_challenge(difficulty, op_min, op_max)
     op_last_calc = op_max - 1 if op_max == length_op_list else op_max
     op_symbol_2 = random.choice((list(operations_type.keys()))[op_min:op_last_calc])
     print(op_symbol_2)

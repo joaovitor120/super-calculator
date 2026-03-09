@@ -4,11 +4,10 @@ import userFunctions
 import calculate_file
 import menuFunctions   
 from json_files import json_insert_data
-import math
 import sqlite3
 import uuid
 
-user_id = uuid.uuid4().bytes
+user_id = uuid.uuid4().bytes #to be insert in sqlite
 now = datetime.now()
 hour_formated = now.strftime("%H:%M") #get hour data
 day_formated = now.strftime("%d/%m/%Y") #get day data
