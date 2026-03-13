@@ -1,4 +1,4 @@
-## After a long break from Python, I decided to jump back in by building a modern, well-structured calculator that goes beyond the basics. This project serves as both a practical tool and a deliberate exercise in applying clean code principles and core Python concepts in a clean, modular way.
+## After a long break from Python, i decided to jump back in again, by building a modern, well-structured calculator that goes beyond the basics, including a lot of functions used in real projects. This project serves as both a practical tool and a deliberate exercise in applying clean code principles and core Python concepts in a clean, modular way.
 
 ## Built-in Python features & standard library used
 
