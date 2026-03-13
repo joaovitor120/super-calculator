@@ -1,7 +1,7 @@
 import calculate_file
 import calculate_file
-import userFunctions
-import userFunctions
+import user_functions
+import user_functions
 import json
 import get_exchange_rate
 import export_data
@@ -17,13 +17,11 @@ def calcinfo(file):
         operationsHistory = []
         for i in content_decoded:
             operationsHistory.append(i['Operation'])
-        return operationsHistory
-    
-    
+        return operationsHistory   
 
 menu = { #dict with functions inserted
     "1": calculate_file.calculate,
-    "2": userFunctions.show_user_data,
+    "2": user_functions.show_user_data,
     "3": calcinfo,
     "4": get_exchange_rate.proccess_main,
     "5": math_challenges,

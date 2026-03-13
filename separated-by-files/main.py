@@ -1,8 +1,8 @@
 import time
 from datetime import datetime
-import userFunctions
+import user_functions
 import calculate_file
-import menuFunctions   
+import menu_functions   
 from json_files import json_insert_data
 import sqlite3
 import uuid
@@ -26,7 +26,7 @@ connection = sqlite3.connect("./database/database.db")
 cursor = connection.cursor()
 columns_user = ["Name", "Year_born", "Age", "Hours", "Day"]
 columns_calc = ["CalcType", "Operation", "Hours", "Day", "User"]
-tables_formatted = (", ".join(i for i in columns_user))
+tables_formatted = (", ".join(i for i in columns_user)) #to use in the sqlite command
 tables_formatted_calc = (", ".join(i for i in columns_calc))
 
 cursor.execute("""
@@ -53,7 +53,7 @@ cursor.execute("""
 """)
 
 def main():
-    user = userFunctions.WelcomeUser()
+    user = user_functions.WelcomeUser()
     user_datas_dict = user.copy() #copy user variable to add two new columns
     user_datas_dict.update({
         "Hours": hour_formated,
@@ -70,14 +70,14 @@ def main():
 
 
     while True:
-        optionmenu = menuFunctions.menufunc()
+        optionmenu = menu_functions.menufunc()
         match optionmenu: #to avoid use if/elif/elif
             case  "1": #calculator
                 try:
                     calctype_to_verified = calculate_file.get_operation() #not verified yet
                     operation = calculate_file.get_valid_operation(calctype_to_verified)
                     num1, num2 = calculate_file.get_numbers()
-                    result = menuFunctions.menu[optionmenu](operation,num1,num2)
+                    result = menu_functions.menu[optionmenu](operation,num1,num2)
                     calcDict = {
                         "Calc Type": operation,
                         "Operation": result,
@@ -91,10 +91,11 @@ def main():
                     ({tables_formatted_calc}) VALUES
                     ('{calcDict["Calc Type"]}', '{calcDict["Operation"]}', '{hour_formated}', '{day_formated}', '{user['Name']}')""")
                     connection.commit()
+                    connection.close()
                 except ZeroDivisionError:
                     print("Division by zero is not allowed")
             case "2": #my informations
-                result = menuFunctions.menu[optionmenu](user)
+                result = menu_functions.menu[optionmenu](user)
             case "3": #calculator history
                 """result = menuFunctions.menu[optionmenu](calcinfos_path)
                 for i in result:
@@ -104,9 +105,9 @@ def main():
                 for i in result:
                     print(str(i)[2:-3]) #to print the result without the 2 first characters and without the last 3
             case "4": #current converter
-                result = menuFunctions.menu[optionmenu]()
+                result = menu_functions.menu[optionmenu]()
             case "5": #math challenges
-                result = menuFunctions.menu[optionmenu]()
+                result = menu_functions.menu[optionmenu]()
             case "6": #export data
                 print("""1 - Export only my user datas
 2 - Export only my operations data
@@ -131,18 +132,19 @@ def main():
                 match select_option:
                     case "1":
                         user_datas_to_csv = user_to_csv()
-                        menuFunctions.menu[optionmenu](user_datas_to_csv, None)
+                        menu_functions.menu[optionmenu](user_datas_to_csv, None)
                     case "2": 
                         calc_history_to_csv = calc_to_csv() 
-                        menuFunctions.menu[optionmenu](None, calc_history_to_csv)
+                        menu_functions.menu[optionmenu](None, calc_history_to_csv)
                     case "3":
                         user_datas_to_csv = user_to_csv()
                         calc_history_to_csv = calc_to_csv() 
-                        menuFunctions.menu[optionmenu](user_datas_to_csv, calc_history_to_csv)
+                        menu_functions.menu[optionmenu](user_datas_to_csv, calc_history_to_csv)
             case "7": #exit
                 print("Goodbye! See you later!")
                 break
         time.sleep(1)
 connection.commit() #to save db changes on db
+connection.close()
 main()
 

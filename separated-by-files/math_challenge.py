@@ -67,7 +67,8 @@ def select_random_non_prime(range_min, range_max):
         # Select a random non-prime from the list using the random.choice function
         return random.choice(non_primes)
 
-def get_calculator_datas(range_min, range_med, range_max, index_min, index_max):
+def get_calculator_datas(range_min, range_med, 
+                         range_max, index_min, index_max):
     num1 = select_random_non_prime(range_med,range_max)
     if range_min > 10 and range_med > 20:
         range_min = int(range_min // 2.3)
@@ -76,7 +77,9 @@ def get_calculator_datas(range_min, range_med, range_max, index_min, index_max):
     op_symbol = random.choice((list(operations_type.keys()))[index_min:index_max])
     return num1, num2, op_symbol
 
-def verify_numbers(result, num1,num2, op_symbol,index_min, index_med, index_max, op_index_min, op_index_max):
+def verify_numbers(result, num1,num2, op_symbol,
+                   index_min, index_med, index_max, 
+                   op_index_min, op_index_max):
     if isinstance(result, int) == False:
         numbers = list(range(index_min, index_med))
         non_prime_numbers_for_divide = [i for i in numbers if i % 2 == 0]
@@ -95,7 +98,9 @@ def verify_numbers(result, num1,num2, op_symbol,index_min, index_med, index_max,
 
     return num1, num2, op_symbol, result
 
-def answer_check_loop(num1,num2, op_symbol,result_calc, result, multiple_operations=False):
+def answer_check_loop(num1,num2, op_symbol,
+                      result_calc, result, 
+                      multiple_operations=False):
     while result_calc != result:
         print("Wrong answer, try again: ")
         if multiple_operations:
@@ -103,7 +108,8 @@ def answer_check_loop(num1,num2, op_symbol,result_calc, result, multiple_operati
         else:
             result_calc = int(input(f"{num1} {op_symbol} {num2} = "))
 def generate_challenge(difficulty, op_min, op_max):
-    num1, num2, op_symbol = get_calculator_datas(ranges.get_min(difficulty), ranges.get_med(difficulty), ranges.get_max(difficulty),op_min,op_max)
+    num1, num2, op_symbol = get_calculator_datas(ranges.get_min(difficulty), ranges.get_med(difficulty), 
+                                                 ranges.get_max(difficulty),op_min,op_max)
     result = operations_type[op_symbol](num1, num2)
     num1, num2, op_symbol, result = verify_numbers(result,num1,num2,op_symbol,ranges.get_min(difficulty), ranges.get_med(difficulty), ranges.get_max(difficulty),op_min,op_max)
     return num1, num2, op_symbol, result
@@ -173,3 +179,5 @@ def math_challenges():
                     challenge_complex(difficulty_map[difficult], op_min, op_max)
 
 #separate functions that make more than one function
+
+math_challenges()

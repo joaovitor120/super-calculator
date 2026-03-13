@@ -1,0 +1,1 @@
+from database.database_settings import add_math_challenge_datas

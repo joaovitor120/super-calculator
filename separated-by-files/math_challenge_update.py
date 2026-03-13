@@ -1,7 +1,7 @@
 import random
 import time
-from sympy import isprime
 import math
+from database import add_math_challenge_datas
 
 levels = ['1','2','3','4']
 levels_qtd = len(levels)
@@ -19,30 +19,29 @@ operations_list = list(operations_type.keys())
 operations_list_length = len(operations_list)
 
 op_index = {
-    'easy': (0,4),
-    'medium': (2,4),
-    'hard': (2, operations_list_length),
-    'very hard': (2, operations_list_length)
+    'easy': (0,3), #(+, -, /, *) --> it will be used in random, that excludes one the last op_symbol
+    'medium': (2,4), #(*,/)
+    'hard': (2, (operations_list_length)), #(*, /)
+    'very hard': (2, (operations_list_length + 1)) #(*, /, **)
 }
 
 difficulty_map = {'1': "easy", '2': "medium", '3': "hard", '4': "very hard"}
 
-
 def isprime(num):
     if num < 2:
         return False
-    for i in range(2, (int(math.sqrt(num))) + 1):
+    for i in range(2, (int(math.sqrt(num))) + 1): #i dont't need to analyse all the divisors to see if the num is prime, because the max pair i will have will stay in this range
         if num % i == 0:
             return False
     return True
 
-class DifficultyRange:
+class DifficultyRange: #to set each calculation range
     def __init__(self):
         self.ranges = {
             "easy": {"min": 2, "med": 11, "max": 21},
-            "medium": {"min": 11, "med": 21, "max": 51},
-            "hard": {"min": 21, "med": 30, "max": 81},
-            "very hard": {"min": 31, "med": 40, "max": 101}
+            "medium": {"min": 10, "med": 21, "max": 51},
+            "hard": {"min": 20, "med": 31, "max": 81},
+            "very hard": {"min": 30, "med": 41, "max": 101}
         }
     
     def get_min(self, difficulty):
@@ -57,7 +56,9 @@ class DifficultyRange:
         return self.ranges[difficulty]
     
 ranges = DifficultyRange()
-
+ranges_min = ranges.get_min
+ranges_med = ranges.get_med
+ranges_max = ranges.get_max
 """index_easy_list = ranges.get_all("easy")
 index_medium_list = ranges.get_all("medium")
 index_hard_list = ranges.get_all("hard")
@@ -84,6 +85,7 @@ def get_levels_difficulty(): #get inputs
     print("""1 - Simple operations(with only two numbers)
 2 - Complex operations(with more than two numbers)
 """)   
+
     message_input_calc_complex = "Choose one operation among them(1/2) to continue: "
     calculation_complexity_input = input(message_input_calc_complex).strip()
     options_available_calc = ['1', '2']
@@ -99,6 +101,7 @@ def get_levels_difficulty(): #get inputs
     level_difficult = ensure_option_menu_correctly(level_difficult_input, level_difficult_message, options_available_level)
     return calculation_complexity, level_difficult
 
+
 def select_random_non_prime(range_min, range_max):
     """Select a random non-prime number within a given range."""
     # Create a list of all non-prime numbers in the range
@@ -112,14 +115,14 @@ def select_random_non_prime(range_min, range_max):
 def get_calculator_datas(range_min, range_med, range_max, index_min, index_max):
     num1 = select_random_non_prime(range_med,range_max)
     if range_min > 10 and range_med > 20:
-        range_min = int(range_min // 2.3)
+        range_min = int(range_min // 2)
         range_med = int(range_med // 2)
     num2 = select_random_non_prime(range_min,range_med)
     op_symbol = random.choice((operations_list)[index_min:index_max])
     return num1, num2, op_symbol
 
 def ensure_integer_result_simple(result, num1,num2, op_symbol,index_min, index_med, op_index_min, op_index_max):
-    if not isinstance(result, int):
+    if not isinstance(result, int): #if result not int
         numbers = list(range(index_min, index_med))
         if op_symbol == "/":
             validates_num2 = [i for i in numbers if num1 % i == 0]
@@ -164,12 +167,13 @@ def answer_retry_loop(num1,num2, op_symbol,user_result_answer, result, multiple_
                 print("Please, type an integer value: ")
         else:
             user_result_answer = int(input(f"{num1} {op_symbol} {num2} = "))
+        answer_status = validate_calculation(user_result_answer, result)
 
 def generate_challenge(difficulty, op_min, op_max):
-    num1, num2, op_symbol = get_calculator_datas(ranges.get_min(difficulty), ranges.get_med(difficulty), ranges.get_max(difficulty),op_min,op_max)
+    num1, num2, op_symbol = get_calculator_datas(ranges_min(difficulty), ranges_med(difficulty), ranges_max(difficulty),op_min,op_max)
     result = operations_type[op_symbol](num1, num2)
-    num2, op_symbol, result = ensure_integer_result_simple(result,num1,num2,op_symbol,ranges.get_min(difficulty), ranges.get_med(difficulty),op_min,op_max)
-    num1, num2, result = force_expoent_two(result, num1,num2,op_symbol, ranges.get_med(difficulty), ranges.get_max(difficulty))
+    num2, op_symbol, result = ensure_integer_result_simple(result,num1,num2,op_symbol,ranges_min(difficulty), ranges_med(difficulty),op_min,op_max)
+    num1, num2, result = force_expoent_two(result, num1,num2,op_symbol, ranges_med(difficulty), ranges_max(difficulty))
     return num1, num2, op_symbol, result
 
 def init_timer():
@@ -181,29 +185,34 @@ def end_timer():
 
 def ask_question(num1=None,num2=None,op_symbol=None, expression=None): #i used each paramater as None to make them optional
     if expression:
-        user_result_answer = int(input(expression))
+        try:
+            user_result_answer = int(input(expression))
+        except Exception as e:
+            print(f"Error, {e}")
     else:
         user_result_answer = int(input(f"{num1} {op_symbol} {num2} = "))
     return user_result_answer
 
 def challenge_simple(difficulty, op_min, op_max):
-    num1, num2, op_symbol, result = generate_challenge(difficulty, op_min, op_max)
-    user_result_answer = ask_question(num1,op_symbol,num2)
+    num1, num2, op_symbol, final_result = generate_challenge(difficulty, op_min, op_max)
     start_time = init_timer()
-    answer_retry_loop(num1,num2,op_symbol,user_result_answer,result)                    
+    user_result_answer = ask_question(num1,num2,op_symbol)
+    expression = f"{num1} {op_symbol} {num2}"
+    answer_retry_loop(num1,num2,op_symbol,user_result_answer,final_result)                    
     end_time = end_timer()
     execution_time = end_time - start_time
     print(f"Perfect, you answered correctly in {int(execution_time)} seconds, congratulations!")
-    
+    add_math_challenge_datas(expression, final_result)
 def challenge_complex(difficulty, op_min, op_max):
     num1, num2, op_symbol, result_0 = generate_challenge(difficulty, op_min, op_max)
                     
     num3, num4, op_symbol_1, result_1 = generate_challenge(difficulty, op_min, op_max)
+
         
     op_symbol_2 = random.choice((operations_list)[op_min:op_max])
     #print(op_symbol_2)
     final_result = operations_type[op_symbol_2](result_0, result_1)
-    result_1, op_symbol_2, final_result = ensure_integer_result_simple(final_result,result_0,result_1,op_symbol_2,ranges.get_min(difficulty), ranges.get_med(difficulty),op_min, op_max)
+    result_1, op_symbol_2, final_result = ensure_integer_result_simple(final_result,result_0,result_1,op_symbol_2,ranges_min(difficulty), ranges_med(difficulty),op_min, op_max)
     #print(op_symbol_2)
     if op_symbol_2 == "**":
         op_symbol_2 = random.choice((operations_list)[op_min:4])
@@ -211,18 +220,17 @@ def challenge_complex(difficulty, op_min, op_max):
     expression = f"({num1} {op_symbol} {num2}) {op_symbol_2} ({num3} {op_symbol_1} {num4}) = "
 
     start_time = init_timer()                           
-    user_result_answer = ask_question(expression=expression)
+    user_result_answer = ask_question(expression=expression) #only to get the user input for the expression
     answer_retry_loop(result_0,result_1,op_symbol_2,user_result_answer,final_result,expression) 
     end_time = end_timer()
     execution_time = end_time - start_time
     print(f"Perfect, your answer correctly in {int(execution_time)} seconds, congratulations!") 
-
-
+    add_math_challenge_datas(expression, final_result)
 
 def math_challenges():
-    green_flag = True
+    running = True
     print("Welcome to the Mental Math Challenge! Here you will practice your mental math skills by answering with integers only. \n")
-    while green_flag == True:
+    while running == True:
         
         calc_type_complex, difficult = get_levels_difficulty()
         
@@ -230,12 +238,13 @@ def math_challenges():
         if calc_type_complex == '1':                                
                 challenge_simple(difficulty_map[difficult], op_min, op_max)
 
+                
         if calc_type_complex == '2':
-                challenge_complex(difficulty_map[difficult], op_min, op_max)
+                challenge_complex(difficulty_map[difficult], op_min, op_max)###############
         return_to_menu_msg = 'Do you want to return to main menu to execute another functions(Y/N)? '
         return_to_menu_input = input(return_to_menu_msg).upper().strip()
         return_to_menu_msg_options = ['Y', 'N']
-        return_to_menu = ensure_option_menu_correctly(return_to_menu_input, return_to_menu_msg, return_to_menu_msg_options)
+        return_to_menu = ensure_option_menu_correctly(return_to_menu_input, return_to_menu_msg, return_to_menu_msg_options).upper().strip()
         if return_to_menu == 'Y':
-            green_flag = False
+            running = False
 #separate functions that make more than one function
